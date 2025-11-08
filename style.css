@@ -1,0 +1,10 @@
+/* Haritanın sayfayı kaplamasını sağlayın */
+#map {
+    height: 100vh; /* Viewport yüksekliğinin tamamı */
+    width: 100%;
+}
+
+body {
+    margin: 0; /* Sayfa kenar boşluklarını sıfırlayın */
+    padding: 0;
+}
