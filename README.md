@@ -1,63 +1,50 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/BhShQpq1)
 # 🕵️ GMT 458 - ÖDEV 2: GeoCrime: Uzamsal Sorgu (GeoGame)
 
-Bu proje, Web GIS prensipleri kullanılarak geliştirilmiş, oyuncuların çok katmanlı coğrafi veri analizi yaparak suç mahallerini tahmin etmeye çalıştığı, **zamana dayalı (temporal)** ve **yüksek skor hedefli (high-score)** bir coğrafi oyundur.
+Bu proje, Web GIS prensipleri kullanılarak geliştirilmiş, oyuncuların GeoJSON verileri üzerinde iki aşamalı suç vakasını (Hırsızlık ve Cinayet) çözmeye çalıştığı, **hikayeleştirilmiş** ve **çoklu vaka sistemine** sahip bir GeoGame'dir.
 
 ---
 
-## 🎯 Proje Amacı ve Çözülen Problemler
+## 📊 Veri Kaynakları ve Analitik Metot
 
-Projenin temel amacı, öğrencilerin **Birden Fazla Veri Katmanını** (Multi-Layer) aynı anda görselleştirme ve analitik olarak kullanma yeteneğini test etmektir.
+Projenin güvenilirliği, resmi ve mekânsal verilere dayanmaktadır.
+
+* **Ana Veri Kaynağı:** Türkiye İstatistik Kurumu (TÜİK) ve ilgili kamu kurumlarının açık veri setleri kullanılarak hazırlanmıştır.
+* **Veri Tipi:** İl bazlı **GeoJSON** verisi (Poligonlar) kullanılmaktadır.
+* **Veri Kategorileri:** Her il için temel risk göstergeleri mevcuttur:
+    * **Eğitim Seviyesi** (Yıl)
+    * **Göreli Yoksulluk** (Oran)
+    * **Suç Profil Sinyalleri** (Cezaevi Çıkışları)
+    * **Nüfus Yoğunluğu**
+
+### Analitik Yaklaşım
+
+Oyun, coğrafi suç prensibine dayanır: Oyuncunun görevi, bu bağımsız risk faktörlerini üst üste getirerek oluşan anomalileri (örneğin, Yüksek Yoksulluk ve Düşük Eğitim seviyesinin çakışması) görsel olarak tespit etmektir.
+
+---
+
+## 🎯 Proje Amacı ve Kritik Bileşenler
 
 | Bileşen | Gereksinim Karşılama | Açıklama |
 | :--- | :--- | :--- |
-| **Vaka Sistemi** | ✅ İki Aşamalı | Oyuncu, **Mülkiyet Suçu (Hırsızlık)** ve **Metropol Gölgesi (Cinayet)** olmak üzere iki ayrı vaka çözmek zorundadır. |
-| **Analitik Zorluk**| ✅ Yüksek | Her vaka, farklı risk faktörlerinin kombinasyonunun (Eğitim, Yoksulluk, Cezaevi) çakışmasını gerektirir. |
-| **Temporal Component** | ✅ Evet | Oyun, **60 saniyelik** geri sayım sayacı ile sınırlıdır. Hız, puan çarpanı getirir. |
-| **High-Score** | ✅ Evet | Yanlış tahminde **-20 Puan** ve **-1 Lisans Puanı** kaybedilir. Skorlar, rekabeti teşvik eder. |
-| **Teknolojiler** | ✅ Leaflet, JS (ES6+) | `fetch` API, dinamik katman yönetimi ve özelleştirilmiş Korolet stilleri kullanılmıştır. |
+| **İki Aşamalı Vaka** | ✅ Cinayet ve Hırsızlık | Oyuncu, **Mülkiyet Suçu (Vaka 1)** ve **Metropol Gölgesi (Vaka 2)** senaryolarını çözerek analitik esnekliğini gösterir. |
+| **Gelişmiş Görselleştirme**| ✅ Korolet ve Renk Tutarlılığı | Tüm veri katmanları, tutarlı bir **Kırmızı-Yeşil risk skalasında** gösterilir. (Kırmızı: Yüksek Risk / Yeşil: Düşük Risk). |
+| **Tıklama/Etkileşim Çözümü**| ✅ Stabil Mimari | Sabit Sınır Katmanı (`borderLayer`) kullanılarak, renkli katmanlar açıkken bile illere her zaman tıklanabilirlik sağlanmıştır. |
+| **Temporal & High-Score** | ✅ Evet | 60 saniyelik süre ve puana dayalı kaybetme sistemi. |
+
+## 🗺️ Oynanış ve Vaka Senaryoları
+
+### Misyon 1: Zincirleme Kırılma (Hırsızlık Tahmini)
+
+* **Hedef:** Ekonomik baskının ve suç yatkınlığının (Cezaevi Çıkışları) mülkiyet suçunu tetiklediği bölge.
+
+### Misyon 2: Metropol Gölgesi (Cinayet Tahmini)
+
+* **Hedef:** Sosyal baskının ve yüksek nüfus yoğunluğunun şiddet olaylarını artırdığı bölge.
 
 ---
 
-## 🚀 Kurulum ve Başlatma
+## 💻 Kilit Kod Mekanikleri
 
-Bu projeyi çalıştırmak için harici bir sunucu (örneğin XAMPP) kurmanıza gerek yoktur. VS Code'daki **Live Server** eklentisi yeterlidir.
-
-1.  **Dosyaları Yerleştirme:** Projenin tüm dosyalarını (`index.html`, `script.js`, `style.css`, `geogame.geojson`) aynı klasöre yerleştirin.
-2.  **VS Code'da Açma:** VS Code'da klasörü açın.
-3.  **Başlatma:** `index.html` dosyasına sağ tıklayın ve **"Open with Live Server"** seçeneğini seçerek oyunu başlatın.
-
----
-
-## 🎮 Oynanış ve Vaka Akışı
-
-Oyun, vaka dosyasına tıklanmasıyla başlar ve süre başlar.
-
-### 1. Misyon 1: Zincirleme Kırılma (Hırsızlık)
-
-* **Odak Veri:** Cezaevi Çıkışları, Yoksulluk Oranı.
-* **Analiz Mantığı:** Faillerin motivasyonu (Yoksulluk) ve yatkınlığı (Cezaevi çıkışları) nerede en yüksektir?
-
-### 2. Misyon 2: Metropol Gölgesi (Cinayet)
-
-* **Odak Veri:** Eğitim Süresi, Nüfus Yoğunluğu.
-* **Analiz Mantığı:** Sosyal baskının (Düşük Eğitim) ve stresin (Yüksek Nüfus) çakıştığı büyük metropolü tespit etme.
-
-### Veri ve Görselleştirme
-
-Oyuncu, ekranın altındaki Kanıt Kartlarına tıklayarak haritanın dolgusunu değiştirir:
-
-| Veri Görseli | Veri Kaynağı | Risk Anlamı |
-| :--- | :--- | :--- |
-| **Ana Renkler**| `Eğitim Risk Skoru` | **Yeşil** = Düşük Risk; **Kırmızı** = Yüksek Risk |
-| **Kart İpuçları**| Mouseover | O ilin verisini (Örn: Eğitim Yılı) Türkiye ortalamasıyla karşılaştırır. |
-| **Harita Sınırları**| `borderLayer` | Tıklama olayını daima yakalar, veri katmanı değişse bile sabit kalır. |
-
----
-
-## 🧩 Kilit Kod Mekanikleri
-
-* **Veri Okuma Güvenliği:** `cleanAndParseFloat` fonksiyonu, GeoJSON'daki hatalı **virgüllü sayıları (`9,3`)** otomatik olarak `9.3` formatına çevirir ve `NaN` hatalarını engeller.
-* **Dinamik Katman Yönetimi:** `switchMapLayer` fonksiyonu, katman kontrol menüsü yerine, alt kısımda yer alan kart tıklamalarıyla GeoJSON dolgu katmanlarını dinamik olarak haritaya ekler ve kaldırır.
-* **Kayıp Durumu:** `resetVaka` fonksiyonu, Can veya Puan 0'a ulaştığında, tüm harita olaylarını (tıklama, mouseover) kaldırır ve oyuncunun oyuna devam etmesini engeller.
-* **Toast Bildirimi:** `showToast` fonksiyonu, tarayıcı uyarılarını (alert) ortadan kaldırarak kullanıcı deneyimini iyileştirir.
+* **Dinamik Katman Değişimi:** Alt kısımdaki **Kanıt Kartlarına** tıklanarak ilgili GeoJSON dolgu katmanları haritaya eklenir/kaldırılır.
+* **Veri Temizleme:** Kod, GeoJSON'dan gelen yerel format hatalarını (virgüllü sayılar gibi) otomatik olarak düzeltir.
+* **Bitiş Mantığı:** Puan veya Lisans Puanı sıfıra düştüğünde haritadaki tüm etkileşimler devre dışı bırakılır.
