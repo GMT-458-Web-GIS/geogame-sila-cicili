@@ -3,22 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoGame Haritası</title>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-
+    <title>GeoCrime: Uzamsal Sorgu (GMT 458 GeoGame)</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    
+    <div id="toast-container"></div> 
+    
+    <div id="map"></div> 
+    
+    <div id="kontrol-paneli">
+        <h2>🕵️ VAKA DOSYASI</h2>
+        <hr>
+        
+        <div id="vaka-metni">Veriler yükleniyor... Lütfen bekleyiniz.</div>
+        <hr>
 
-    <div id="map"></div>
+        <div id="durum-bilgisi">
+            Puan: <span id="puan">0</span> | Süre: <span id="sure">--</span>s | Lisans Puanı: <span id="can">3</span>
+        </div>
+        
+        <p class="not">
+            <p>Haritadaki bir ile tıklayarak Ham Veri Tablosunu açın.</p>
+            
+            </p>Kanıt kutularına tıklayarak verileri inceleyin.</p>
+        </p>
+    </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20n6cT8y98l8/S8jI58+8+R9p5c5fXw+x+6wGg7I5c0="
-            crossorigin=""></script>
+    <div id="ipucu-kartlari">
+        <div class="ipucu-karti" id="kart-1" onclick="switchMapLayer('EGITIM')">
+            <div class="kart-baslik">Kanıt 1: Eğitim Seviyesi</div>
+            <div class="kart-icerik" id="ipucu-egitim"></div>
+        </div>
+        <div class="ipucu-karti" id="kart-2" onclick="switchMapLayer('CEZAEVI')">
+            <div class="kart-baslik">Kanıt 2: Ceza İnfaz Çıkışları</div>
+            <div class="kart-icerik" id="ipucu-cezaevi"></div>
+        </div>
+        <div class="ipucu-karti" id="kart-3" onclick="switchMapLayer('YOKSULLUK')">
+            <div class="kart-baslik">Kanıt 3: Yoksulluk Oranı</div>
+            <div class="kart-icerik" id="ipucu-yoksulluk"></div>
+        </div>
+    </div>
+    
+    <div id="tutorial-modal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div id="tutorial-title"><h2>MİSYON BİLGİLENDİRMESİ: HARİTA OKUR YAZARLIĞI</h2></div>
+        
+        <div id="tutorial-narrative">
+            <p style="font-weight: bold;">Bu bir uzamsal analiz simülasyonudur. Amacınız, verilerin mantıksal olarak kesiştiği suç bölgesini tespit etmektir.</p>
+            <ol>
+                <li>Ekranın altındaki KANIT KARTLARINA tıklayarak haritadaki renk katmanlarını açın(Verileri analiz edebilmek için).</li>
+                <li>Fareyi bir ilin üzerine getirerek o ilin Ham Verilerini kartlarda analiz edin.</li>
+                <li>Görevi ve kanıtları inceledikten sonra, doğru tahmininize tıklayın.</li>
+                <li>Yanlış tahminlerde 20 Puan ve 1 Can kaybedersiniz. Puanınız 0'a düşerse görev sonlanır.</li>
+            </ol>
+            <p style="color: #00FFFF;">Başlamadan önce tüm kanıtları (Eğitim, Yoksulluk, Cezaevi) en az bir kere incelediğinizden emin olun.</p>
+        </div>
+        
+        <button onclick="closeTutorialModal()" class="baslat-buton" style="margin-top: 20px;">VAKA DOSYASINA GEÇİŞ YAP</button>
+    </div>
+</div>
 
+    <div id="case-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeCaseFile()">&times;</span>
+            <div id="case-title"></div>
+            <div id="case-narrative"></div>
+            <button onclick="closeCaseFile()" class="baslat-buton">HARİTAYI AÇ VE VAKAYI BAŞLAT</button>
+        </div>
+    </div>
+
+    <div id="raw-data-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeRawDataModal()">&times;</span>
+            <h3 id="data-il-adi"></h3>
+            
+            <table id="data-table">
+                <thead>
+                    <tr><th>Veri Kategorisi</th><th>Değer</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Nüfus (İLLEREGÖ)</td><td id="raw-nufus"></td></tr>
+                    <tr><td>Eğitim Süresi (Yıl)</td><td id="raw-egitim"></td></tr>
+                    <tr><td>Cezaevi Çıkışları (Kişi)</td><td id="raw-cezaevi"></td></tr>
+                    <tr><td>Göreli Yoksulluk (%)</td><td id="raw-yoksulluk"></td></tr>
+                </tbody>
+            </table>
+            
+            <button onclick="closeRawDataModal()" class="baslat-buton" style="margin-top: 20px;">KAPAT</button>
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="script.js"></script>
 </body>
 </html>
