@@ -46,3 +46,43 @@ The game is based on the principle of Crime Geography: The player's task is to l
 * **Dynamic Layer Switching:** Clicking the **Clue Cards** dynamically adds/removes the relevant GeoJSON fill layers from the map.
 * **Data Cleaning:** The code uses robust data parsing (`cleanAndParseFloat`) to automatically correct local format errors (like comma-separated numbers from TÜİK data).
 * **Game Conclusion:** The loss condition (Zero Score or Zero Lives) completely disables map interaction, forcing the user to restart the game.
+
+# 🗺️ GeoCrime: Geospatial Query - Design Document
+
+This document outlines the intended frontend structure and the step-by-step logical flow (User Experience) of the GeoCrime game, confirming the design requirements for the GMT 458 assignment.
+
+---
+
+### 1. 🎮 MOCKUP 1: Main Game Interface (Desktop View)
+
+This layout is the primary screen where the player conducts the investigation. The design focuses on simplicity and data visibility.
+
+| Label | Position | Content and Interaction |
+| :--- | :--- | :--- |
+| **A. Map Area** | Screen Center | Turkey's provincial borders are drawn statically. The selected clue layer (D) actively colors the map based on risk. |
+| **B. Control Dashboard** | **Top Right Corner** | Displays **Score**, **Time (Temporal Component)**, and **License Points (Lives)**. Updates dynamically. |
+| **C. Status/Case Text** | Inside Dashboard | Displays the active mission title and the dynamic status, such as “EVIDENCE LOADING: [Province Name]”. |
+| **D. Clue Cards** | **Bottom Left Corner** | Three clickable cards. When selected, the map layer switches, and the card highlights as “ACTIVE” (for dynamic visualization). |
+| **E. Analytical Hints** | Inside Clue Cards | Displays analytical hints derived from data (e.g., “Poverty: Above Average (Critical Difficulty)”). |
+| **F. Raw Data Table** | Opens on Click | The table opens when a province is clicked, showing the raw statistical values for that province (initially hidden). |
+| **G. Map Interaction** | Mouse Movement | When the cursor moves over a province, its border is highlighted in neon blue. |
+
+### 2. 🧠 MOCKUP 2: User Flow Diagram (Modal and Game Flow)
+
+This diagram outlines the interaction sequence from game entry to successful case completion, relying heavily on system modals.
+
+#### A. Initial Entry Flow
+
+| Step | Description |
+| :--- | :--- |
+| **1. Initial Load** | Map and data layers load asynchronously. |
+| **2. Tutorial/Guide** | Opens automatically; introduces the rules and interface to the player (Optional aid). |
+| **3. Case File** | Player closes the guide $\rightarrow$ The **"CASE MODAL"** (storytelling screen) opens to present the mission. |
+| **4. Game Start** | Player closes the Case Modal $\rightarrow$ The **Timer Starts** and the active case solving process begins. |
+
+#### B. Success / Loss Conditions
+
+| Status | Triggering Action | Result / System Behavior |
+| :--- | :--- | :--- |
+| **Success** | Player clicks the correct province. | **“VAKA ÇÖZÜMLENDİ”** (Toast Notification) $\rightarrow$ Score and Lives are updated $\rightarrow$ The **“START NEXT MISSION”** modal opens for transition to the next case (if available). |
+| **Loss** | Score $\le 0$ OR Lives $\le 0$. | **“GÖREV İPTAL!”** (Error notification) $\rightarrow$ Map click events are disabled $\rightarrow$ **“RESTART”** button becomes active. |
