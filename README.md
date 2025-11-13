@@ -55,6 +55,8 @@ This document outlines the intended frontend structure and the step-by-step logi
 
 ### 1. 🎮 MOCKUP 1: Main Game Interface (Desktop View)
 
+![GeoCrime Final Ekran Düzeni ve Etkileşim Noktaları](assets/Image_taslak1.png)
+
 This layout is the primary screen where the player conducts the investigation. The design focuses on simplicity and data visibility.
 
 | Label | Position | Content and Interaction |
