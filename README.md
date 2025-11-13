@@ -56,7 +56,7 @@ This document outlines the intended frontend structure and the step-by-step logi
 ### 1. 🎮 MOCKUP 1: Main Game Interface (Desktop View)
 
 ![GeoCrime Final Ekran Düzeni ve Etkileşim Noktaları](ımage_taslak1.png)
-g
+
 This layout is the primary screen where the player conducts the investigation. The design focuses on simplicity and data visibility.
 
 | Label | Position | Content and Interaction |
@@ -70,6 +70,8 @@ This layout is the primary screen where the player conducts the investigation. T
 | **G. Map Interaction** | Mouse Movement | When the cursor moves over a province, its border is highlighted in neon blue. |
 
 ### 2. 🧠 MOCKUP 2: User Flow Diagram (Modal and Game Flow)
+
+![GeoCrime Final Ekran Düzeni ve Etkileşim Noktaları](ımage_taslak.png)
 
 This diagram outlines the interaction sequence from game entry to successful case completion, relying heavily on system modals.
 
