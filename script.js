@@ -1,7 +1,7 @@
 // =======================================================================
-// A. GLOBAL TANIMLAR VE AYARLAR
+// A. GLOBAL DEFINITIONS AND SETTINGS
 // =======================================================================
-var vakaDurumu = { can: 3, sure: 120 }; // Puan kaldırıldı
+var vakaDurumu = { can: 3, sure: 120 }; // Score removed
 var timer;
 
 var geoJsonLayer;
@@ -10,11 +10,11 @@ let averageData = {};
 let currentLayer = null;
 var borderLayer = null;
 
-// SÜTUN VE DOSYA ADLARI
+// COLUMN AND FILE NAMES
 const GEOJSON_FILE = 'songeojson.geojson';
 const COLUMNS = {
     IL_ADI: 'adm1_tr',
-    EGITIM: 'EĞİTİMS', // Kırık/Kısaltılmış alan adı
+    EGITIM: 'EĞİTİMS', // Broken/Abbreviated field name
     CEZAEVI: 'cezaevi_field_2',
     YOKSULLUK: 'YOKSULLUKO',
     NUFUS: 'İLLEREGÖ',
@@ -22,32 +22,32 @@ const COLUMNS = {
     ALKOL_MEKAN: 'alkolmekan_field_2'
 };
 
-// VAKA LİSTESİ (Çoklu Vaka Sistemi)
+// CASE LIST (Multiple Case System)
 const caseList = [
     {
         id: "VAKA_01",
         il: "VAN",
-        title: '<span style="color: yellow;">VAKA #001: HIRSIZLIK SUÇU</span>',
+        title: '<span style="color: yellow;">CASE #001: THEFT CRIME</span>',
         narrative:
-"<br>Dedektif, şehir genelinde yüksek değerli mülkleri hedef alan organize bir hırsızlık dalgası ortaya çıktı.<br>" +
-"Suç mahalleri, sosyal kontrolün zayıf, ekonomik baskının yüksek ve eğitim seviyesinin düşük olduğu noktalarla dikkat çekiyor.<br><br>" +
-"GÖREV:<br>" +
-"Dedektif, üç kritik risk göstergesinin <br>-Yüksek Cezaevi Çıkışı, <br>-Yüksek Yoksulluk  <br>-Düşük Eğitim   <br> Bu kritik göstergelerin en yoğun şekilde kesiştiği ili tespit ederek," +
-"bir sonraki olası suç mahallinin profilini kesinleştirmelidir.<br><br>" +
-"Unutma dedektif… Bu vakayı çözebilecek tek kişi sensin.<br>"
+"<br>Detective, an organized wave of high-value property thefts has emerged across the city.<br>" +
+"The crime scenes are notable for weak social control, high economic pressure, and low education levels.<br><br>" +
+"MISSION:<br>" +
+"Detective, you must pinpoint the province where the three critical risk indicators <br>-High Prison Release, <br>-High Poverty  <br>-Low Education   <br> intersect most intensely," +
+"and finalize the profile of the next likely crime scene.<br><br>" +
+"Remember detective... You are the only one who can solve this case.<br>"
     },
     {
         id: "VAKA_02",
         il: "KÜTAHYA",
-        title: '<span style="color: yellow;">VAKA #002: CİNAYET SUÇU',
+        title: '<span style="color: yellow;">CASE #002: MURDER CRIME',
         narrative:
-"<br>Dedektif, şimdi bir cinayet davası için sana ihtiyacımız var.<br>" +
-"Sonraki cinayet suçlarının;cezaevi çıkışlarının ve alkol tüketiminin yüksek olduğu bölgelerde,<br>" +
-"polis kontrolünün ise zayıfladığı alanlarda patlak vermesi bekleniyor.<br><br>" +
-"GÖREV:<br>" +
-"Dedektif, bu üç risk sinyalinin <br>-Yüksek Cezaevi Çıkışı, <br>-Yüksek Alkollü Mekân Sayısı <br>-Düşük Polis Kontrolü <br>" +
-"mantıksal olarak en yoğun olduğu ili tespit ederek, bir sonraki olası suç mahalli profilini doğrulamalıdır.<br><br>" +
-"Unutma dedektif… Bu vakayı çözebilecek tek kişi sensin."
+"<br>Detective, we need you now for a murder case.<br>" +
+"Subsequent murder crimes are expected to erupt in areas with high prison releases and high alcohol consumption,<br>" +
+"but where police control is weak.<br><br>" +
+"MISSION:<br>" +
+"Detective, you must confirm the profile of the next likely crime scene by identifying the province where these three risk signals <br>-High Prison Release, <br>-High Number of Alcohol Venues <br>-Low Police Control <br>" +
+"logically intersect most intensely.<br><br>" +
+"Remember detective... You are the only one who can solve this case."
     }
 ];
 
@@ -55,7 +55,7 @@ const caseList = [
 let currentCaseIndex = 0;
 let ANOMALI_IL_ADI = caseList[currentCaseIndex].il;
 
-// Haritayı başlat
+// Initialize the map
 var map = L.map('map').setView([39.9, 32.8], 6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
@@ -63,7 +63,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // ------------------------------------------------------------------------
-// B. GEOJSON YÜKLEME VE VERİ İŞLEME
+// B. GEOJSON LOADING AND DATA PROCESSING
 // ------------------------------------------------------------------------
 
 function cleanAndParseFloat(value) {
@@ -101,11 +101,11 @@ function calculateAverages(data) {
 
 async function fetchAndLoadGeoJSON() {
     try {
-        L.DomUtil.get('vaka-metni').innerHTML = "GeoJSON verisi yükleniyor...";
+        L.DomUtil.get('vaka-metni').innerHTML = "Loading GeoJSON data...";
         
         const response = await fetch(GEOJSON_FILE);
         if (!response.ok) {
-            throw new Error(`Dosya yüklenemedi: ${response.statusText}. 'songeojson.geojson' dosyasını kontrol edin.`);
+            throw new Error(`Could not load file: ${response.statusText}. Check 'songeojson.geojson' file.`);
         }
         
         const geojsonData = await response.json();
@@ -124,28 +124,28 @@ async function fetchAndLoadGeoJSON() {
         }
         
     } catch (error) {
-        console.error("KRİTİK HATA: GeoJSON yükleme başarısız!", error);
-        L.DomUtil.get('vaka-metni').innerHTML = "KRİTİK HATA: Veri yükleme başarısız! Konsolu kontrol edin.";
+        console.error("CRITICAL ERROR: GeoJSON loading failed!", error);
+        L.DomUtil.get('vaka-metni').innerHTML = "CRITICAL ERROR: Data loading failed! Check the console.";
     }
 }
 
 fetchAndLoadGeoJSON();
 
 // =======================================================================
-// C. STİL VE KOROLET FONKSİYONLARI 
+// C. STYLE AND COLOR FUNCTIONS 
 // =======================================================================
 
-function getColor(d) { // Eğitim Süresi (YÜKSEK DEĞER = DÜŞÜK RİSK/YEŞİL)
+function getColor(d) { // Education Duration (HIGH VALUE = LOW RISK/GREEN)
     d = parseFloat(d); 
     return d > 10.5 ? '#1a9850' : d > 9.5 ? '#a6d96a' : d > 8.5 ? '#fee08b' : d > 7.5 ? '#f46d43' : '#d73027'; 
 }
 
-function getYoksullukColor(d) { // Yoksulluk Oranı (YÜKSEK DEĞER = YÜKSEK RİSK/KIRMIZI)
+function getYoksullukColor(d) { // Poverty Rate (HIGH VALUE = HIGH RISK/RED)
     d = parseFloat(d);
     return d > 12 ? '#d73027' : d > 9 ? '#f46d43' : d > 6 ? '#fee08b' : d > 3 ? '#a6d96a' : '#1a9850';
 }
 
-function getCezaeviColor(d) { // Cezaevi Çıkışları (YÜKSEK DEĞER = YÜKSEK RİSK/KIRMIZI)
+function getCezaeviColor(d) { // Prison Releases (HIGH VALUE = HIGH RISK/RED)
     d = parseInt(d);
     return d > 10000 ? '#d73027' : d > 7500 ? '#f46d43' : d > 5000 ? '#feb24c' : d > 2500 ? '#a6d96a' : '#1a9850';
 }
@@ -154,28 +154,28 @@ function styleBorders(feature) {
     return { fillColor: 'transparent', color: '#888', weight: 1.5, fillOpacity: 0 };
 }
 
-function style(feature) { // Eğitim Süresi Stili (Ana)
+function style(feature) { // Education Duration Style (Main)
     const egitimYili = cleanAndParseFloat(feature.properties[COLUMNS.EGITIM]); 
     if (isNaN(egitimYili)) { return { fillColor: '#888888', weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.0, interactive: false }; }
     return { fillColor: getColor(egitimYili), weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.7, interactive: false };
 }
 
-function styleYoksulluk(feature) { // Yoksulluk Stili
+function styleYoksulluk(feature) { // Poverty Style
     var yoksullukOrani = cleanAndParseFloat(feature.properties[COLUMNS.YOKSULLUK]);
     return { fillColor: getYoksullukColor(yoksullukOrani), weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.7, interactive: false };
 }
 
-function styleCezaevi(feature) { // Cezaevi Stili
+function styleCezaevi(feature) { // Prison Style
     var cezaeviSayisi = parseInt(feature.properties[COLUMNS.CEZAEVI]);
     return { fillColor: getCezaeviColor(cezaeviSayisi), weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.7, interactive: false };
 }
 
-function stylePolisMerkez(feature) { // Polis Merkezi Stili
+function stylePolisMerkez(feature) { // Police Station Style
     var sayi = parseInt(feature.properties[COLUMNS.POLIS_MERKEZ]);
     return { fillColor: getPolisMerkezColor(sayi), weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.7, interactive: false };
 }
 
-function styleAlkolMekan(feature) { // Alkol Mekanı Stili
+function styleAlkolMekan(feature) { // Alcohol Venue Style
     var sayi = parseInt(feature.properties[COLUMNS.ALKOL_MEKAN]);
     return { fillColor: getAlkolMekanColor(sayi), weight: 0.1, opacity: 0.1, color: 'transparent', fillOpacity: 0.7, interactive: false };
 }
@@ -192,7 +192,7 @@ function getAlkolMekanColor(d) {
 
 
 function loadGeoJsonLayer(data) {
-    // 1. SABİT SINIR KATMANINI OLUŞTUR (Mouseover ve Tıklamayı yönetir)
+    // 1. CREATE STATIC BORDER LAYER (Manages mouseover and click)
     borderLayer = L.geoJson(data, { 
         style: styleBorders,
         onEachFeature: function(feature, layer) {
@@ -200,12 +200,12 @@ function loadGeoJsonLayer(data) {
                 mouseover: function(e) {
                     e.target.setStyle({ color: '#00FFFF', weight: 3 }); 
                     updateClueCards(feature.properties); 
-                    L.DomUtil.get('vaka-metni').innerHTML = 'KANIT YÜKLENİYOR: ' + feature.properties[COLUMNS.IL_ADI]; 
+                    L.DomUtil.get('vaka-metni').innerHTML = 'LOADING EVIDENCE: ' + feature.properties[COLUMNS.IL_ADI]; 
                 },
                 mouseout: function(e) {
                     borderLayer.resetStyle(e.target); 
                     L.DomUtil.get('vaka-metni').innerHTML = 
-                        `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">VAKA DOSYASINI İNCELEMEK İÇİN TIKLAYINIZ</a>`;
+                        `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">CLICK TO EXAMINE THE CASE FILE</a>`;
                 },
                 click: function(e) { 
                     checkPrediction(e);
@@ -215,19 +215,19 @@ function loadGeoJsonLayer(data) {
         }
     }).addTo(map);
 
-    // 2. DİNAMİK VERİ KATMANLARINI OLUŞTUR (Sadece renklendirme için)
+    // 2. CREATE DYNAMIC DATA LAYERS (For coloring only)
     geoJsonLayer = L.geoJson(data, { style: style, interactive: false });
     var yoksullukLayer = L.geoJson(data, { style: styleYoksulluk, interactive: false });
     var cezaeviLayer = L.geoJson(data, { style: styleCezaevi, interactive: false });
     var polisLayer = L.geoJson(data, { style: stylePolisMerkez, interactive: false });
     var alkolLayer = L.geoJson(data, { style: styleAlkolMekan, interactive: false });
     
-    // Menüye ekle
-    overlayMaps["Eğitim Risk Skoru (Ana)"] = geoJsonLayer;
-    overlayMaps["Kanıt: Yoksulluk Oranı"] = yoksullukLayer;
-    overlayMaps["Kanıt: Cezaevi Çıkışları"] = cezaeviLayer;
-    overlayMaps["Kontrol: Polis Merkezi Sayısı"] = polisLayer;
-    overlayMaps["Kontrol: Alkol Mekanları Sayısı"] = alkolLayer;
+    // Add to menu
+    overlayMaps["Education Risk Score (Main)"] = geoJsonLayer;
+    overlayMaps["Evidence: Poverty Rate"] = yoksullukLayer;
+    overlayMaps["Evidence: Prison Releases"] = cezaeviLayer;
+    overlayMaps["Control: Number of Police Stations"] = polisLayer;
+    overlayMaps["Control: Number of Alcohol Venues"] = alkolLayer;
 
     var bounds = geoJsonLayer.getBounds();
     if (bounds.isValid()) { map.fitBounds(bounds); }
@@ -240,22 +240,22 @@ function switchMapLayer(layerName) {
     
     let newLayer;
     
-    // 🚨 KRİTİK GÜNCELLEME: VAKA BAZINDA KATMAN ATAMASI
-    if (currentCaseIndex === 0) { // VAKA 1 (Hırsızlık): Eğitim, Cezaevi, Yoksulluk
+    // 🚨 CRITICAL UPDATE: CASE-BASED LAYER ASSIGNMENT
+    if (currentCaseIndex === 0) { // CASE 1 (Theft): Education, Prison, Poverty
         if (layerName === 'EGITIM') {
-            newLayer = overlayMaps["Eğitim Risk Skoru (Ana)"];
+            newLayer = overlayMaps["Education Risk Score (Main)"];
         } else if (layerName === 'CEZAEVI') {
-            newLayer = overlayMaps["Kanıt: Cezaevi Çıkışları"];
+            newLayer = overlayMaps["Evidence: Prison Releases"];
         } else if (layerName === 'YOKSULLUK') {
-            newLayer = overlayMaps["Kanıt: Yoksulluk Oranı"];
+            newLayer = overlayMaps["Evidence: Poverty Rate"];
         }
-    } else if (currentCaseIndex === 1) { // VAKA 2 (Cinayet): Cezaevi, Polis, Alkol
+    } else if (currentCaseIndex === 1) { // CASE 2 (Murder): Prison, Police, Alcohol
         if (layerName === 'EGITIM') {
-            newLayer = overlayMaps["Kanıt: Cezaevi Çıkışları"]; 
+            newLayer = overlayMaps["Evidence: Prison Releases"]; 
         } else if (layerName === 'CEZAEVI') {
-            newLayer = overlayMaps["Kontrol: Polis Merkezi Sayısı"]; 
+            newLayer = overlayMaps["Control: Number of Police Stations"]; 
         } else if (layerName === 'YOKSULLUK') {
-            newLayer = overlayMaps["Kontrol: Alkol Mekanları Sayısı"];
+            newLayer = overlayMaps["Control: Number of Alcohol Venues"];
         }
     }
 
@@ -269,7 +269,7 @@ function switchMapLayer(layerName) {
 }
 
 // =======================================================================
-// D. OYUN YÖNETİMİ VE MODAL FONKSİYONLARI (GÜNCELLENDİ)
+// D. GAME MANAGEMENT AND MODAL FUNCTIONS (UPDATED)
 // =======================================================================
 
 function openTutorialModal() {
@@ -298,71 +298,71 @@ function closeCaseFile() {
 }
 
 function initGame() {
-    // L.DomUtil.get('puan').innerHTML = vakaDurumu.puan; // Puan kaldırıldı
+    // L.DomUtil.get('puan').innerHTML = vakaDurumu.puan; // Score removed
     L.DomUtil.get('can').innerHTML = vakaDurumu.can;
     L.DomUtil.get('sure').innerHTML = vakaDurumu.sure;
 
     L.DomUtil.get('vaka-metni').innerHTML = 
-        `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">VAKA DOSYASINI İNCELEMEK İÇİN TIKLAYINIZ</a>`;
+        `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">CLICK TO EXAMINE THE CASE FILE</a>`;
     
     document.querySelectorAll('.ipucu-kartlari').forEach(card => card.classList.remove('active'));
 }
 
-// Yeni: Oyunun Bittiği Durum (Can bitti)
+// New: Game Over State (Lives run out)
 function handleGameOver() {
-    clearInterval(timer);
-    if (borderLayer) {
-         borderLayer.eachLayer(layer => layer.off('click')); 
-         borderLayer.eachLayer(layer => layer.off('mouseover')); 
-         borderLayer.eachLayer(layer => layer.off('mouseout')); 
-    }
-    if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
-    L.DomUtil.get('can').innerHTML = 0; 
-    L.DomUtil.get('vaka-metni').innerHTML = 
-        `<a onclick="window.location.reload()" style="color: red; text-decoration: underline; cursor: pointer; font-size: 1.2em;">
-             BAŞARISIZ. YENİ BİR MİSYON BAŞLATMAK İÇİN TIKLAYINIZ.
-        </a>`;
+    clearInterval(timer);
+    if (borderLayer) {
+         borderLayer.eachLayer(layer => layer.off('click')); 
+         borderLayer.eachLayer(layer => layer.off('mouseover')); 
+         borderLayer.eachLayer(layer => layer.off('mouseout')); 
+    }
+    if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
+    L.DomUtil.get('can').innerHTML = 0; 
+    L.DomUtil.get('vaka-metni').innerHTML = 
+        `<a onclick="window.location.reload()" style="color: red; text-decoration: underline; cursor: pointer; font-size: 1.2em;">
+             FAILED. CLICK TO START A NEW MISSION.
+        </a>`;
 }
 
-// Yeni: Başarılı Vaka Çözümünde Sonraki Vakaya Geçiş
+// New: Proceed to Next Case on Successful Case Resolution
 function handleCaseSuccess() {
-    currentCaseIndex++;
-    
-    if (currentCaseIndex < caseList.length) {
-        const nextCase = caseList[currentCaseIndex];
-        ANOMALI_IL_ADI = nextCase.il; 
+    currentCaseIndex++;
+    
+    if (currentCaseIndex < caseList.length) {
+        const nextCase = caseList[currentCaseIndex];
+        ANOMALI_IL_ADI = nextCase.il; 
 
-        showToast(`SİSTEM GÜNCELLEDİ: VAKA ${nextCase.id} YÜKLENİYOR...`, 'success', 2500); 
+        showToast(`SYSTEM UPDATED: LOADING CASE ${nextCase.id}...`, 'success', 2500); 
 
-        if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
-        if (borderLayer) borderLayer.eachLayer(l => l.setStyle(styleBorders(l.feature))); 
-        document.querySelectorAll('.ipucu-kartlari').forEach(card => card.classList.remove('active'));
-        
-        // Vaka 2'ye özel kart başlık güncellemesi
-        if (currentCaseIndex === 1) { 
-             document.getElementById('kart-1').querySelector('.kart-baslik').innerHTML = "Kanıt 1: Cezaevi çıkışları";
-             document.getElementById('kart-2').querySelector('.kart-baslik').innerHTML = "Kanıt 2: Polis Merkezi Sayısı"; 
-             document.getElementById('kart-3').querySelector('.kart-baslik').innerHTML = "Kanıt 3: Alkol Mekanları Sayısı";
+        if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
+        if (borderLayer) borderLayer.eachLayer(l => l.setStyle(styleBorders(l.feature))); 
+        document.querySelectorAll('.ipucu-kartlari').forEach(card => card.classList.remove('active'));
+        
+        // Case 2 specific card title update
+        if (currentCaseIndex === 1) { 
+             document.getElementById('kart-1').querySelector('.kart-baslik').innerHTML = "Evidence 1: Prison Releases";
+             document.getElementById('kart-2').querySelector('.kart-baslik').innerHTML = "Evidence 2: Number of Police Stations"; 
+             document.getElementById('kart-3').querySelector('.kart-baslik').innerHTML = "Evidence 3: Number of Alcohol Venues";
 
-             document.getElementById('ipucu-egitim').innerHTML = 'Veri Bekleniyor...';
-             document.getElementById('ipucu-cezaevi').innerHTML = 'Veri Bekleniyor...';
-             document.getElementById('ipucu-yoksulluk').innerHTML = 'Veri Bekleniyor...';
-        }
+             document.getElementById('ipucu-egitim').innerHTML = 'Data Pending...';
+             document.getElementById('ipucu-cezaevi').innerHTML = 'Data Pending...';
+             document.getElementById('ipucu-yoksulluk').innerHTML = 'Data Pending...';
+        }
 
-        L.DomUtil.get('can').innerHTML = vakaDurumu.can;
-        vakaDurumu.sure = 120; // Yeni vaka için süreyi sıfırla
-        L.DomUtil.get('vaka-metni').innerHTML = 
-            `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">VAKA ${nextCase.id} BAŞLATILDI. TIKLAYINIZ.</a>`;
-        
-        setTimeout(() => { 
-            openCaseFile(); 
-        }, 2000); 
+        L.DomUtil.get('can').innerHTML = vakaDurumu.can;
+        vakaDurumu.sure = 120; // Reset time for new case
+        L.DomUtil.get('vaka-metni').innerHTML = 
+            `<a onclick="openCaseFile()" style="color: inherit; text-decoration: none;">CASE ${nextCase.id} STARTED. CLICK HERE.</a>`;
+        
+        setTimeout(() => { 
+            openCaseFile(); 
+        }, 2000); 
 
-    } else {
-        // TÜM VAKALAR ÇÖZÜLDÜ (ZAFER)
-        showToast(`TEBRİKLER! TÜM VAKALAR ÇÖZÜLDÜ.`, 'success', 8000); 
-        if (borderLayer) borderLayer.eachLayer(layer => layer.off('click')); 
-    }
+    } else {
+        // ALL CASES SOLVED (VICTORY)
+        showToast(`CONGRATULATIONS! ALL CASES SOLVED.`, 'success', 8000); 
+        if (borderLayer) borderLayer.eachLayer(layer => layer.off('click')); 
+    }
 }
 
 
@@ -374,39 +374,39 @@ function startTimer() {
         if (vakaDurumu.sure <= 0) { 
             clearInterval(timer); 
             
-            vakaDurumu.can -= 1; // Can azalır
-            L.DomUtil.get('can').innerHTML = vakaDurumu.can; // Canı hemen güncelle
+            vakaDurumu.can -= 1; // Decrease life
+            L.DomUtil.get('can').innerHTML = vakaDurumu.can; // Update life immediately
 
             if (vakaDurumu.can > 0) {
-                // Başarısızlık: Aynı vakayı yeniden yükle
-                showToast(`SÜRE BİTTİ! VAKA BAŞARISIZ OLDU. Can (-1). Aynı görev yeniden başlatılıyor.`, 'error', 5000);
+                // Failure: Reload the same case
+                showToast(`TIME UP! CASE FAILED. Life (-1). Same mission restarting.`, 'error', 5000);
                 setTimeout(() => {
-                    vakaDurumu.sure = 120; // Süreyi sıfırla
+                    vakaDurumu.sure = 120; // Reset time
                     L.DomUtil.get('sure').innerHTML = vakaDurumu.sure;
-                    // Harita sınır stillerini sıfırla
+                    // Reset map border styles
                     if (borderLayer) borderLayer.eachLayer(l => l.setStyle(styleBorders(l.feature))); 
-                    openCaseFile(); // Vaka dosyasını aç (bu, closeCaseFile ile yeni timer başlatır)
+                    openCaseFile(); // Open case file (which restarts new timer via closeCaseFile)
                 }, 3000);
             } else {
                 // Game Over
-                showToast(`SÜRE BİTTİ! GÖREV İPTAL! Canınız kalmadı.`, 'error', 5000);
+                showToast(`TIME UP! MISSION ABORTED! No lives remaining.`, 'error', 5000);
                 handleGameOver();
             }
         }
     }, 1000); 
 }
 
-// Eski resetVaka fonksiyonu tamamen kaldırıldı ve mantığı handleCaseSuccess/handleGameOver fonksiyonlarına bölündü.
+// The old resetVaka function was completely removed and its logic split into handleCaseSuccess/handleGameOver functions.
 
 
 // =======================================================================
-// E. ETKİLEŞİM VE İPUCU KARTLARI (GÜNCELLENDİ)
+// E. INTERACTION AND CLUE CARDS (UPDATED)
 // =======================================================================
 
 function showToast(message, type = 'success', duration = 3000) {
     const container = document.getElementById('toast-container');
     
-    if (!container) { console.error("HATA: #toast-container bulunamadı!"); return; }
+    if (!container) { console.error("ERROR: #toast-container not found!"); return; }
 
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -429,16 +429,16 @@ function showToast(message, type = 'success', duration = 3000) {
 function showRawDataModal(properties) {
     document.getElementById('raw-data-modal').style.display = 'block';
     
-    // 1. Veri Doldurma
-    document.getElementById('data-il-adi').innerHTML = `Ham Veri Dosyası: ${properties[COLUMNS.IL_ADI]}`;
+    // 1. Fill Data
+    document.getElementById('data-il-adi').innerHTML = `Raw Data File: ${properties[COLUMNS.IL_ADI]}`;
     
-    // Temel Dört Veri
+    // Basic Four Data
     document.getElementById('raw-nufus').innerHTML = properties[COLUMNS.NUFUS] ? parseInt(properties[COLUMNS.NUFUS]).toLocaleString() : 'N/A';
-    document.getElementById('raw-egitim').innerHTML = properties[COLUMNS.EGITIM] ? cleanAndParseFloat(properties[COLUMNS.EGITIM]).toFixed(1) + ' Yıl' : 'N/A';
-    document.getElementById('raw-cezaevi').innerHTML = properties[COLUMNS.CEZAEVI] ? parseInt(properties[COLUMNS.CEZAEVI]).toLocaleString() + ' Kişi' : 'N/A';
+    document.getElementById('raw-egitim').innerHTML = properties[COLUMNS.EGITIM] ? cleanAndParseFloat(properties[COLUMNS.EGITIM]).toFixed(1) + ' Years' : 'N/A';
+    document.getElementById('raw-cezaevi').innerHTML = properties[COLUMNS.CEZAEVI] ? parseInt(properties[COLUMNS.CEZAEVI]).toLocaleString() + ' People' : 'N/A';
     document.getElementById('raw-yoksulluk').innerHTML = properties[COLUMNS.YOKSULLUK] ? cleanAndParseFloat(properties[COLUMNS.YOKSULLUK]).toFixed(2) + ' %' : 'N/A';
 
-    // 🚨 YENİ EKLENEN İKİ ALAN (POLIS ve ALKOL)
+    // 🚨 NEWLY ADDED TWO FIELDS (POLICE and ALCOHOL)
     document.getElementById('raw-polis').innerHTML = properties[COLUMNS.POLIS_MERKEZ] ? parseInt(properties[COLUMNS.POLIS_MERKEZ]).toLocaleString() : 'N/A';
     document.getElementById('raw-alkol').innerHTML = properties[COLUMNS.ALKOL_MEKAN] ? parseInt(properties[COLUMNS.ALKOL_MEKAN]).toLocaleString() : 'N/A';
 }
@@ -452,32 +452,32 @@ function checkPrediction(e) {
     clearInterval(timer); 
     
     if (clickedArea[COLUMNS.IL_ADI] === ANOMALI_IL_ADI) { 
-        // Başarılı Tahmin
+        // Successful Prediction
         
         e.target.setStyle({ weight: 5, color: '#00FF00', fillOpacity: 1 }); 
-        showToast(`VAKA ÇÖZÜMLENDİ! ${ANOMALI_IL_ADI} doğru il.`, 'success', 3000);
+        showToast(`CASE SOLVED! ${ANOMALI_IL_ADI} is the correct province.`, 'success', 3000);
         
-        // Başarılı çözümde bir sonraki vakaya geçer
-        setTimeout(() => handleCaseSuccess(), 3000); // 🚨 Yeni fonksiyon çağrısı
+        // On successful resolution, proceed to the next case
+        setTimeout(() => handleCaseSuccess(), 3000); // 🚨 New function call
     } else {
-        // Hatalı Tahmin
-        vakaDurumu.can -= 1; // Can azalır
+        // Incorrect Prediction
+        vakaDurumu.can -= 1; // Decrease life
         
         e.target.setStyle({ fillColor: '#FF0000', color: 'red', weight: 4 }); 
-        showToast(`HATALI TAHMİN! Can (-1).`, 'error', 3000);
+        showToast(`INCORRECT PREDICTION! Life (-1).`, 'error', 3000);
         
         L.DomUtil.get('can').innerHTML = vakaDurumu.can;
         
         if (vakaDurumu.can > 0) { 
-             // Can varsa aynı vakayı yeniden denemek için hazırlık yap
-             setTimeout(() => {
-                e.target.setStyle(styleBorders(e.target.feature)); // Hata stilini sıfırla
-                closeRawDataModal(); // Ham veri modalını kapat
-                startTimer(); // Timer'ı yeniden başlat
-             }, 3000);
-        } else { 
-            handleGameOver(); // Game Over
-        }
+             // If life remains, prepare to reattempt the same case
+             setTimeout(() => {
+                e.target.setStyle(styleBorders(e.target.feature)); // Reset error style
+                closeRawDataModal(); // Close raw data modal
+                startTimer(); // Restart the timer
+             }, 3000);
+        } else { 
+            handleGameOver(); // Game Over
+        }
     }
     
     showRawDataModal(clickedArea); 
@@ -489,41 +489,41 @@ function updateClueCards(properties) {
     const yoksullukVal = cleanAndParseFloat(properties[COLUMNS.YOKSULLUK]);
     
     const egitimHint = egitimVal > averageData[COLUMNS.EGITIM] ? 
-        `Üstünde (${egitimVal.toFixed(1)} Yıl) - RİSK DÜŞÜK` : 
-        `Altında (${egitimVal.toFixed(1)} Yıl) - RİSK YÜKSEK`;
+        `Above (${egitimVal.toFixed(1)} Years) - LOW RISK` : 
+        `Below (${egitimVal.toFixed(1)} Years) - HIGH RISK`;
 
     const cezaeviHint = cezaeviVal > averageData[COLUMNS.CEZAEVI] ?
-        `Yüksek Profil (${cezaeviVal.toLocaleString()} Kişi) - KRİTİK RİSK` :
-        `Düşük Profil (${cezaeviVal.toLocaleString()} Kişi) - TAKİP NORMAL`;
+        `High Profile (${cezaeviVal.toLocaleString()} People) - CRITICAL RISK` :
+        `Low Profile (${cezaeviVal.toLocaleString()} People) - NORMAL MONITORING`;
         
     const yoksullukHint = yoksullukVal > averageData[COLUMNS.YOKSULLUK] ?
-        `Üstünde (%${yoksullukVal.toFixed(1)}) - FİNANSAL ZORLUK` :
-        `Altında (%${yoksullukVal.toFixed(1)}) - FİNANSAL GÜVENDE`;
+        `Above (%${yoksullukVal.toFixed(1)}) - FINANCIAL HARDSHIP` :
+        `Below (%${yoksullukVal.toFixed(1)}) - FINANCIALLY SECURE`;
 
-    // KART İÇERİKLERİNİN VAKA BAZINDA GÜNCELLEMESİ
-    if (currentCaseIndex === 0) { // VAKA 1: Hırsızlık
-        L.DomUtil.get('ipucu-egitim').innerHTML = isNaN(egitimVal) ? 'VERİ HATALI' : `Eğitim: ${egitimHint}`;
+    // UPDATE CARD CONTENTS BASED ON CASE
+    if (currentCaseIndex === 0) { // CASE 1: Theft
+        L.DomUtil.get('ipucu-egitim').innerHTML = isNaN(egitimVal) ? 'DATA ERROR' : `Education: ${egitimHint}`;
         L.DomUtil.get('ipucu-cezaevi').innerHTML = cezaeviHint;
-        L.DomUtil.get('ipucu-yoksulluk').innerHTML = isNaN(yoksullukVal) ? 'VERİ HATALI' : yoksullukHint;
+        L.DomUtil.get('ipucu-yoksulluk').innerHTML = isNaN(yoksullukVal) ? 'DATA ERROR' : yoksullukHint;
         
-    } else if (currentCaseIndex === 1) { // VAKA 2: Cinayet (Yeni verilerle)
+    } else if (currentCaseIndex === 1) { // CASE 2: Murder (With new data)
         const polisVal = parseInt(properties[COLUMNS.POLIS_MERKEZ]) || 0;
         const alkolVal = parseInt(properties[COLUMNS.ALKOL_MEKAN]) || 0;
         const nufusVal = parseInt(properties[COLUMNS.NUFUS]) || 0;
 
         const polisHint = polisVal > averageData[COLUMNS.POLIS_MERKEZ] ?
-            `Polis: YÜKSEK Kontrol (${polisVal})` :
-            `Polis: DÜŞÜK Kontrol (${polisVal}) - KRİTİK EKSİKLİK`;
+            `Police: HIGH Control (${polisVal})` :
+            `Police: LOW Control (${polisVal}) - CRITICAL LACK`;
             
         const alkolHint = alkolVal > averageData[COLUMNS.ALKOL_MEKAN] ?
-            `Alkol: YÜKSEK Yoğunluk (${alkolVal}) - STRES YÜKSEK` :
-            `Alkol: DÜŞÜK Yoğunluk (${alkolVal}) - STRES NORMAL`;
+            `Alcohol: HIGH Density (${alkolVal}) - HIGH STRESS` :
+            `Alcohol: LOW Density (${alkolVal}) - NORMAL STRESS`;
 
-        // Kart 1 (Şimdi Cezaevi Çıkışları)
-        L.DomUtil.get('ipucu-egitim').innerHTML = isNaN(egitimVal) ? 'VERİ HATALI' : `${cezaeviHint} <br> `;
-        // Kart 2 (Şimdi Polis Merkezi Sayısı)
+        // Card 1 (Now Prison Releases)
+        L.DomUtil.get('ipucu-egitim').innerHTML = isNaN(egitimVal) ? 'DATA ERROR' : `${cezaeviHint} <br> `;
+        // Card 2 (Now Number of Police Stations)
         L.DomUtil.get('ipucu-cezaevi').innerHTML = ` ${polisHint}<br>`;
-        // Kart 3 (Şimdi Alkol Mekanları Sayısı)
-        L.DomUtil.get('ipucu-yoksulluk').innerHTML = isNaN(yoksullukVal) ? 'VERİ HATALI' : ` ${alkolHint}<br>`;
+        // Card 3 (Now Number of Alcohol Venues)
+        L.DomUtil.get('ipucu-yoksulluk').innerHTML = isNaN(yoksullukVal) ? 'DATA ERROR' : ` ${alkolHint}<br>`;
     }
 }
