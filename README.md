@@ -3,6 +3,9 @@
 # 🗺️ PLAY THE GAME NOW! 🚀
 > **Click to visit the Live Web GIS Crime Profiling Game:** [Launch Live Game](https://gmt-458-web-gis.github.io/geogame-sila-cicili/)
 
+> **(https://gmt-458-web-gis.github.io/geogame-sila-cicili/)**
+
+
 This project is a narrative-driven, **multi-case GeoGame** developed using Web GIS principles. Players solve two-stage crime scenarios (Theft and Homicide) by performing geospatial data analysis on GeoJSON datasets.
 
 ---
