@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoCrime: Uzamsal Sorgu (GMT 458 GeoGame)</title>
+    <title>GeoCrime: Spatial Query (GMT 458 GeoGame)</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     
@@ -16,34 +16,34 @@
     <div id="map"></div> 
     
     <div id="kontrol-paneli">
-        <h2>🕵️ VAKA DOSYASI</h2>
+        <h2>🕵️ CASE FILE</h2>
         <hr>
         
-        <div id="vaka-metni">Veriler yükleniyor... Lütfen bekleyiniz.</div>
+        <div id="vaka-metni">Loading data... Please wait.</div>
         <hr>
 
         <div id="durum-bilgisi">
-             Süre: <span id="sure">--</span>s | Can: <span id="can">3</span>
+             Time: <span id="sure">--</span>s | Lives: <span id="can">3</span>
         </div>
         
         <p class="not">
-            <p>Haritadaki bir ile tıklayarak tahmininizi yapın.</p>
-            <p>Farenizi herhangi bir ilin üzerine getirdiğinizde kanıt kutucukları üzerinden verileri kontrol edebilirsiniz.</p>
-            </p>Kanıt kutularına tıklayarak verileri inceleyin.</p>
+            <p>Click on any province on the map to make your guess.</p>
+            <p>When you hover your mouse over a province, you can check the data through the evidence cards.</p>
+            </p>Click the evidence cards to examine the data.</p>
         </p>
     </div>
 
     <div id="ipucu-kartlari">
         <div class="ipucu-karti" id="kart-1" onclick="switchMapLayer('EGITIM')">
-            <div class="kart-baslik">Kanıt 1: Eğitim Seviyesi</div>
+            <div class="kart-baslik">Evidence 1: Education Level</div>
             <div class="kart-icerik" id="ipucu-egitim"></div>
         </div>
         <div class="ipucu-karti" id="kart-2" onclick="switchMapLayer('CEZAEVI')">
-            <div class="kart-baslik">Kanıt 2: Cezaevi Çıkışları</div>
+            <div class="kart-baslik">Evidence 2: Prison Releases</div>
             <div class="kart-icerik" id="ipucu-cezaevi"></div>
         </div>
         <div class="ipucu-karti" id="kart-3" onclick="switchMapLayer('YOKSULLUK')">
-            <div class="kart-baslik">Kanıt 3: Yoksulluk Oranı</div>
+            <div class="kart-baslik">Evidence 3: Poverty Rate</div>
             <div class="kart-icerik" id="ipucu-yoksulluk"></div>
         </div>
     </div>
@@ -51,22 +51,22 @@
     <div id="tutorial-modal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
 <div id="tutorial-title">
-  <h2 style="color: yellow;">MİSYON BİLGİLENDİRMESİ: HARİTA OKUR YAZARLIĞI</h2>
+  <h2 style="color: yellow;">MISSION BRIEFING: MAP LITERACY</h2>
 </div>
 
         
         <div id="tutorial-narrative">
-            <p style="font-weight: bold;">Bu bir uzamsal analiz simülasyonudur. Amacınız, verilerin mantıksal olarak kesiştiği suç bölgesini tespit etmektir.</p>
+            <p style="font-weight: bold;">This is a spatial analysis simulation. Your goal is to identify the crime zone where the data logically intersects.</p>
             <ol>
-                <li>Ekranın altındaki KANIT KARTLARINA tıklayarak haritadaki renk katmanlarını açın(Verileri analiz edebilmek için).</li>
-                <li>Fareyi bir ilin üzerine getirerek o ilin Ham Verilerini kartlarda analiz edin.</li>
-                <li>Görevi ve kanıtları inceledikten sonra, doğru tahmininize tıklayın.</li>
-                <li>Yanlış tahminlerde ve vakalrın belirtilen süre içinde tamamlanamaması durumunda 1 Can kaybedersiniz. Canınız biterse görev sonlanır.</li>
+                <li>Click the EVIDENCE CARDS at the bottom of the screen to activate the color layers on the map (to analyze the data).</li>
+                <li>Hover over a province to analyze its raw data in the cards.</li>
+                <li>After examining the mission and evidence, click your correct guess.</li>
+                <li>You lose 1 life if you make a wrong guess or fail to complete the case within the given time. When you run out of lives, the mission ends.</li>
             </ol>
-            <p style="color: #00FFFF;">Başlamadan önce tüm kanıtları (Eğitim, Yoksulluk, Cezaevi) en az bir kere incelediğinizden emin olun.</p>
+            <p style="color: #00FFFF;">Before starting, make sure you examine all evidence at least once (Education, Poverty, Prison).</p>
         </div>
         
-        <button onclick="closeTutorialModal()" class="baslat-buton" style="margin-top: 20px;">VAKA DOSYASINA GEÇİŞ YAP</button>
+        <button onclick="closeTutorialModal()" class="baslat-buton" style="margin-top: 20px;">GO TO CASE FILE</button>
     </div>
 </div>
 
@@ -75,7 +75,7 @@
             <span class="close-button" onclick="closeCaseFile()">&times;</span>
             <div id="case-title"></div>
             <div id="case-narrative"></div>
-            <button onclick="closeCaseFile()" class="baslat-buton">HARİTAYI AÇ VE VAKAYI BAŞLAT</button>
+            <button onclick="closeCaseFile()" class="baslat-buton">OPEN MAP AND START CASE</button>
         </div>
     </div>
 
@@ -86,19 +86,19 @@
             
             <table id="data-table">
                 <thead>
-                    <tr><th>Veri Kategorisi</th><th>Değer</th></tr>
+                    <tr><th>Data Category</th><th>Value</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Nüfus (İLLEREGÖ)</td><td id="raw-nufus"></td></tr>
-                    <tr><td>Eğitim Süresi (Yıl)</td><td id="raw-egitim"></td></tr>
-                    <tr><td>Cezaevi Çıkışları (Kişi)</td><td id="raw-cezaevi"></td></tr>
-                    <tr><td>Göreli Yoksulluk (%)</td><td id="raw-yoksulluk"></td></tr>
-                    <tr><td>Polis Merkezi Sayısı</td><td id="raw-polis"></td></tr>
-                    <tr><td>Alkol Mekan Sayısı</td><td id="raw-alkol"></td></tr>
+                    <tr><td>Population (By Province)</td><td id="raw-nufus"></td></tr>
+                    <tr><td>Education Duration (Years)</td><td id="raw-egitim"></td></tr>
+                    <tr><td>Prison Releases (People)</td><td id="raw-cezaevi"></td></tr>
+                    <tr><td>Relative Poverty (%)</td><td id="raw-yoksulluk"></td></tr>
+                    <tr><td>Number of Police Stations</td><td id="raw-polis"></td></tr>
+                    <tr><td>Number of Alcohol Establishments</td><td id="raw-alkol"></td></tr>
                 </tbody>
             </table>
             
-            <button onclick="closeRawDataModal()" class="baslat-buton" style="margin-top: 20px;">KAPAT</button>
+            <button onclick="closeRawDataModal()" class="baslat-buton" style="margin-top: 20px;">CLOSE</button>
         </div>
     </div>
 
