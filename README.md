@@ -1,6 +1,7 @@
 # 🕵️ GMT 458 - ASSIGNMENT 2: GeoCrime: Geospatial Query (GeoGame)
 
-> [Click to Visit the Game](https://gmt-458-web-gis.github.io/geogame-sila-cicili/)
+# 🗺️ PLAY THE GAME NOW! 🚀
+> **Click to visit the Live Web GIS Crime Profiling Game:** [Launch Live Game](https://gmt-458-web-gis.github.io/geogame-sila-cicili/)
 
 This project is a narrative-driven, **multi-case GeoGame** developed using Web GIS principles. Players solve two-stage crime scenarios (Theft and Homicide) by performing geospatial data analysis on GeoJSON datasets.
 
